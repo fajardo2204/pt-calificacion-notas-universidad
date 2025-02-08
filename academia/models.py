@@ -1,11 +1,12 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
 # Modelo para materias
 class Subjects(models.Model):
-  nombre_materia = models.CharField(max_length=50)
+  nombre_materia = models.CharField(max_length=50, unique=True)
   creditos = models.IntegerField()
   horas = models.IntegerField()
 
@@ -29,7 +30,7 @@ class Enrollments(models.Model):
     help_text='Estudiante inscrito en la materia'
   )
 
-  calificacion = models.FloatField(null=True, blank=True)
+  calificacion = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
 
   class Meta:
     unique_together = ['subject_id', 'student_id']  # Evita inscripciones duplicadas

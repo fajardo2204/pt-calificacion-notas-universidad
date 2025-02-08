@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import StudentRegisterSerializer
+from .serializers import StudentRegisterSerializer, StudentListSerializer
+from .models import StudentProfile
 
 # Create your views here.
 
@@ -22,6 +23,12 @@ class StudentRegisterView(generics.CreateAPIView):
       serializer.save()
       return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
+
+# Vista para listar estudiantes
+class StudentListView(generics.ListAPIView):
+  queryset = StudentProfile.objects.all()
+  serializer_class = StudentListSerializer
+  permission_classes = [IsAuthenticated]
 
 # Vista para el login de estudiantes
 # class StudentLoginView(APIView):

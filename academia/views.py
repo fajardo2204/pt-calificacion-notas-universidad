@@ -8,6 +8,7 @@ from .serializers import (
   CreateSubjectsSerializer,
   EnrollmentsSerializer,
   SubjectsSerializer,
+  GradeSerializer
 )
 from .models import (
   Subjects,
@@ -61,12 +62,31 @@ class TeacherSubjectsView(APIView):
     subjects = Subjects.objects.filter(teacher_id=user)
     data = []
     for subject in subjects:
-      students = Enrollments.objects.filter(subject_id=subject).values('student_id__username')
+      students = Enrollments.objects.filter(subject_id=subject).values('student_id__username', 'calificacion')
       subject_data = {
         'nombre_materia': subject.nombre_materia,
         'creditos': subject.creditos,
         'horas': subject.horas,
-        'students': list(students)
+        'students': [
+          {
+            'username': student['student_id__username'],
+            'calificacion': student['calificacion'],
+            'estado': 'aprobado' if student['calificacion'] is not None and student['calificacion'] >= 2.95 else 'reprobado' if student['calificacion'] is not None else 'sin calificación'
+          }
+          for student in students
+        ]
       }
       data.append(subject_data)
     return Response(data)
+
+# Vista para calificar estudiantes
+class GradeStudentView(generics.UpdateAPIView):
+  queryset = Enrollments.objects.all()
+  serializer_class = GradeSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+  def perform_update(self, serializer):
+    enrollment = self.get_object()
+    if enrollment.subject_id.teacher_id != self.request.user:
+      raise PermissionDenied('Solo el profesor que imparte la materia puede calificar a los estudiantes.')
+    serializer.save()
