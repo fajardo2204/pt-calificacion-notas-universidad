@@ -3,6 +3,7 @@ from usuarios.serializers import UserSerializer
 
 from .models import TeacherProfile
 
+# Serializador para registrar profesores
 class TeacherRegisterSerializer(serializers.ModelSerializer):
   # Definir los campos del usuario
   user = UserSerializer()

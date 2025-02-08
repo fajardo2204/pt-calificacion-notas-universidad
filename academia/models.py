@@ -12,9 +12,8 @@ class Subjects(models.Model):
   teacher_id = models.ForeignKey(
     settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,
-    related_name='Profesor',
-    help_text='Profesor que imparte la materia',
-    default=3
+    related_name='materias_impartidas',
+    help_text='Profesor que imparte la materia'
   )
 
   def __str__(self):
@@ -22,20 +21,18 @@ class Subjects(models.Model):
 
 # Modelo para inscripciones
 class Enrollments(models.Model):
-  subject_id = models.ForeignKey(Subjects, on_delete=models.CASCADE)
-
+  subject_id = models.ForeignKey(Subjects, on_delete=models.CASCADE, related_name='inscripciones')
   student_id = models.ForeignKey(
     settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE,
-    related_name='Estudiantes',
-    help_text='Estudiante inscrito en la materia',
-    default=4
+    related_name='materias_inscritas',
+    help_text='Estudiante inscrito en la materia'
   )
 
   calificacion = models.FloatField(null=True, blank=True)
 
   class Meta:
-    unique_together = ['subject_id', 'student_id'] # Evita inscripciones duplicadas
+    unique_together = ['subject_id', 'student_id']  # Evita inscripciones duplicadas
 
   def __str__(self):
     return f"{self.subject_id} - {self.student_id}"

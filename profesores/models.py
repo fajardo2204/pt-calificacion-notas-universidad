@@ -6,7 +6,6 @@ from django.db import models
 class TeacherProfile (models.Model):
   user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
   department = models.CharField(max_length=25)
-  is_active = models.BooleanField(default=True)
 
   def __str__(self):
     return f"Profesor: {self.user.username} - Departamento: {self.department}"

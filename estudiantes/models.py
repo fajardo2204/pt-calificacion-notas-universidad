@@ -6,7 +6,6 @@ from django.db import models
 class StudentProfile(models.Model):
   user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
   career = models.CharField(max_length=25)
-  is_active = models.BooleanField(default=True)
 
   def __str__(self):
     return f"Estudiante: {self.user.username} - Carrera: {self.career}"
